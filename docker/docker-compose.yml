@@ -1,0 +1,63 @@
+version: "3.9"
+
+services:
+  mysql:
+    # Build image từ Dockerfile đã tạo (có sẵn script init schema)
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    container_name: student-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "Student@123."
+      MYSQL_DATABASE: "student_db"
+      MYSQL_USER: "student"
+      MYSQL_PASSWORD: "student@123"
+      TZ: "Asia/Ho_Chi_Minh"
+    volumes:
+      - student_mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "student", "-pStudent@123"]
+      timeout: 20s
+      retries: 10
+
+  # Spring Boot Application (Development Mode)
+  student-app:
+    build:
+      context: ../
+      dockerfile: docker/app/Dockerfile
+    container_name: student-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../src:/app/src
+      - maven-cache:/root/.m2
+      - ../pom.xml:/app/pom.xml
+    working_dir: /app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      - "SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/student_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      - "SPRING_DATASOURCE_USERNAME=student"
+      - "SPRING_DATASOURCE_PASSWORD=Student@123"
+      - "SPRING_PROFILES_ACTIVE=dev"
+
+  # Tuỳ chọn: UI quản trị DB đơn giản
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
+    restart: unless-stopped
+
+volumes:
+  student_mysql_data:
+  maven-cache:
+
+

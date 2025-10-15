@@ -1,0 +1,4 @@
+#run IntelliJ
+snap run intellij-idea-community
+#run BE
+mvn spring-boot:run

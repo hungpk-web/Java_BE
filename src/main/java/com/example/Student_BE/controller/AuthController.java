@@ -1,0 +1,50 @@
+package com.example.Student_BE.controller;
+
+import com.example.Student_BE.dto.*;
+import com.example.Student_BE.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * Controller xử lý authentication
+ */
+@RestController
+@RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "API đăng nhập")
+@CrossOrigin(origins = "*")
+public class AuthController {
+
+    @Autowired
+    private AuthService authService;
+
+    /**
+     * API đăng nhập
+     */
+    @PostMapping("/login")
+    @Operation(summary = "Đăng nhập", description = "Đăng nhập với username và password")
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            LoginResponse response = authService.login(loginRequest);
+            return ResponseEntity.ok(ApiResponse.success("Đăng nhập thành công", response));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(400, e.getMessage()));
+        }
+    }
+    @PostMapping("/register")
+    @Operation(summary = "Đăng ky", description = "Đăng ky voi username va password")
+    public ResponseEntity<ApiResponse<RegisterRespone>> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        try {
+            authService.register(registerRequest);
+            RegisterRespone response = new RegisterRespone();
+            return ResponseEntity.ok(ApiResponse.success("Đăng ky thành công", response));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(400, e.getMessage()));
+        }
+    }
+}
