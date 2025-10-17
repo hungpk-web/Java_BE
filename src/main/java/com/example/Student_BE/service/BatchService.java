@@ -8,8 +8,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.example.Student_BE.utils.DateTimeUtils;
 
 /**
  * Service để quản lý Batch Jobs
@@ -28,10 +27,10 @@ public class BatchService {
      */
     public JobExecution startExportStudentCsvJob() throws Exception {
         // Tạo JobParameters với timestamp để đảm bảo job chạy được nhiều lần
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String timestamp = DateTimeUtils.generateTimestamp();
 
         JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("timestamp", System.currentTimeMillis())
+                .addLong("timestamp", DateTimeUtils.getCurrentTimestamp())
                 .addString("jobName", "exportStudentCsvJob")
                 .addString("startTime", timestamp)
                 .toJobParameters();

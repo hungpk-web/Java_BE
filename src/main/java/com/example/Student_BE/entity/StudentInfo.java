@@ -1,5 +1,7 @@
 package com.example.Student_BE.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.seasar.doma.Entity;
 import org.seasar.doma.GeneratedValue;
 import org.seasar.doma.GenerationType;
@@ -14,6 +16,8 @@ import java.time.LocalDateTime;
  */
 @Entity(immutable = true)
 @Table(name = "student_info")
+@Data
+@AllArgsConstructor
 public class StudentInfo {
 
     @Id
@@ -33,32 +37,5 @@ public class StudentInfo {
     @Column(name = "date_of_birth")
     private final LocalDateTime dateOfBirth;
 
-    public StudentInfo(Integer infoId, Integer studentId, String address, Double averageScore, LocalDateTime dateOfBirth) {
-        this.infoId = infoId;
-        this.studentId = studentId;
-        this.address = address;
-        this.averageScore = averageScore;
-        this.dateOfBirth = dateOfBirth;
-    }
 
-    // Getters
-    public Integer getInfoId() {
-        return infoId;
-    }
-
-    public Integer getStudentId() {
-        return studentId;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public Double getAverageScore() {
-        return averageScore;
-    }
-
-    public LocalDateTime getDateOfBirth() {
-        return dateOfBirth;
-    }
 }

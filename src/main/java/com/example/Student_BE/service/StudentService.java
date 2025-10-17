@@ -1,7 +1,7 @@
 package com.example.Student_BE.service;
 
-import com.example.Student_BE.dto.StudentRequest;
-import com.example.Student_BE.dto.StudentResponse;
+import com.example.Student_BE.dto.StudentRequestDto;
+import com.example.Student_BE.dto.StudentResponseDto;
 import com.example.Student_BE.entity.Student;
 import com.example.Student_BE.entity.StudentInfo;
 import com.example.Student_BE.dao.StudentDao;
@@ -29,7 +29,7 @@ public class StudentService {
     /**
      * Lấy danh sách tất cả student
      */
-    public List<StudentResponse> getAllStudents() {
+    public List<StudentResponseDto> getAllStudents() {
         List<Student> students = studentDao.selectAll();
         return students.stream()
                 .map(this::convertToResponse)
@@ -39,7 +39,7 @@ public class StudentService {
     /**
      * Lấy student theo ID
      */
-    public StudentResponse getStudentById(Integer studentId) {
+    public StudentResponseDto getStudentById(Integer studentId) {
         Student student = studentDao.selectById(studentId);
         if (student == null) {
             throw new RuntimeException("Student không tồn tại với ID: " + studentId);
@@ -50,21 +50,21 @@ public class StudentService {
     /**
      * Tạo student mới
      */
-    public StudentResponse createStudent(StudentRequest studentRequest) {
+    public StudentResponseDto createStudent(StudentRequestDto studentRequestDto) {
         // Kiểm tra student code đã tồn tại chưa
-        if (studentDao.existsByStudentCode(studentRequest.getStudentCode())) {
-            throw new RuntimeException("Mã sinh viên đã tồn tại: " + studentRequest.getStudentCode());
+        if (studentDao.existsByStudentCode(studentRequestDto.getStudentCode())) {
+            throw new RuntimeException("Mã sinh viên đã tồn tại: " + studentRequestDto.getStudentCode());
         }
 
         // Tạo Student entity
-        Student student = new Student(null, studentRequest.getStudentName(), studentRequest.getStudentCode());
+        Student student = new Student(null, studentRequestDto.getStudentName(), studentRequestDto.getStudentCode());
 
         // Lưu Student và lấy entity với ID đã được tạo
         Student savedStudent = studentDao.insert(student).getEntity();
 
         // Tạo StudentInfo
         StudentInfo studentInfo = new StudentInfo(null, savedStudent.getStudentId(),
-                studentRequest.getAddress(), studentRequest.getAverageScore(), studentRequest.getDateOfBirth());
+                studentRequestDto.getAddress(), studentRequestDto.getAverageScore(), studentRequestDto.getDateOfBirth());
 
         // Lưu StudentInfo
         studentInfoDao.insert(studentInfo).getEntity();
@@ -75,7 +75,7 @@ public class StudentService {
     /**
      * Cập nhật student
      */
-    public StudentResponse updateStudent(Integer studentId, StudentRequest studentRequest) {
+    public StudentResponseDto updateStudent(Integer studentId, StudentRequestDto studentRequestDto) {
         // Tìm student
         Student student = studentDao.selectById(studentId);
         if (student == null) {
@@ -83,13 +83,13 @@ public class StudentService {
         }
 
         // Kiểm tra student code có thay đổi và đã tồn tại chưa
-        if (!student.getStudentCode().equals(studentRequest.getStudentCode())
-                && studentDao.existsByStudentCode(studentRequest.getStudentCode())) {
-            throw new RuntimeException("Mã sinh viên đã tồn tại: " + studentRequest.getStudentCode());
+        if (!student.getStudentCode().equals(studentRequestDto.getStudentCode())
+                && studentDao.existsByStudentCode(studentRequestDto.getStudentCode())) {
+            throw new RuntimeException("Mã sinh viên đã tồn tại: " + studentRequestDto.getStudentCode());
         }
 
         // Cập nhật thông tin Student
-        Student updatedStudent = new Student(studentId, studentRequest.getStudentName(), studentRequest.getStudentCode());
+        Student updatedStudent = new Student(studentId, studentRequestDto.getStudentName(), studentRequestDto.getStudentCode());
         studentDao.update(updatedStudent).getEntity();
 
         // Cập nhật StudentInfo
@@ -97,7 +97,7 @@ public class StudentService {
         if (studentInfoOpt.isPresent()) {
             StudentInfo studentInfo = studentInfoOpt.get();
             StudentInfo updatedStudentInfo = new StudentInfo(studentInfo.getInfoId(), studentId,
-                    studentRequest.getAddress(), studentRequest.getAverageScore(), studentRequest.getDateOfBirth());
+                    studentRequestDto.getAddress(), studentRequestDto.getAverageScore(), studentRequestDto.getDateOfBirth());
             studentInfoDao.update(updatedStudentInfo).getEntity();
         }
 
@@ -127,7 +127,7 @@ public class StudentService {
     /**
      * Tìm kiếm student theo tên
      */
-    public List<StudentResponse> searchStudentsByName(String name) {
+    public List<StudentResponseDto> searchStudentsByName(String name) {
         List<Student> students = studentDao.findByStudentNameContaining("%" + name + "%");
         return students.stream()
                 .map(this::convertToResponse)
@@ -137,8 +137,8 @@ public class StudentService {
     /**
      * Convert Student entity to StudentResponse
      */
-    private StudentResponse convertToResponse(Student student) {
-        StudentResponse response = new StudentResponse();
+    private StudentResponseDto convertToResponse(Student student) {
+        StudentResponseDto response = new StudentResponseDto();
         response.setStudentId(student.getStudentId());
         response.setStudentName(student.getStudentName());
         response.setStudentCode(student.getStudentCode());

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Request tạo/cập nhật student")
-public class StudentRequest {
+public class StudentRequestDto {
     
     @NotBlank(message = "Tên sinh viên không được để trống")
     @Size(max = 20, message = "Tên sinh viên không được quá 20 ký tự")

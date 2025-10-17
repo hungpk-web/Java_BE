@@ -21,48 +21,11 @@ import java.util.Optional;
 public interface StudentInfoDao {
 
     /**
-     * Lấy tất cả student info
-     */
-    @Select
-    List<StudentInfo> selectAll();
-
-    /**
-     * Tìm student info theo ID
-     */
-    @Select
-    StudentInfo selectById(Integer id);
-
-    /**
      * Tìm StudentInfo theo student_id
      */
     @Select
     @Sql("SELECT * FROM student_info WHERE student_id = /*studentId*/1")
     Optional<StudentInfo> findByStudentId(Integer studentId);
-
-    /**
-     * Lấy danh sách StudentInfo với điểm trung bình >= threshold
-     */
-    @Select
-    @Sql("SELECT * FROM student_info WHERE average_score >= /*threshold*/8.0")
-    List<StudentInfo> findByAverageScoreGreaterThanEqual(Double threshold);
-
-    /**
-     * Lấy danh sách StudentInfo với điểm trung bình trong khoảng
-     */
-    @Select
-    @Sql("SELECT * FROM student_info WHERE average_score BETWEEN /*minScore*/7.0 AND /*maxScore*/10.0")
-    List<StudentInfo> findByAverageScoreBetween(Double minScore, Double maxScore);
-
-    /**
-     * Lấy tất cả StudentInfo với Student được load
-     */
-    @Select
-    @Sql("""
-        SELECT si.*, s.student_name, s.student_code
-        FROM student_info si 
-        LEFT JOIN student s ON si.student_id = s.student_id
-        """)
-    List<StudentInfoWithStudent> findAllWithStudent();
 
     /**
      * Thêm student info mới

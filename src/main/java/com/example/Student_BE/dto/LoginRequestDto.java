@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Request đăng nhập")
-public class LoginRequest {
+public class LoginRequestDto {
     
     @NotBlank(message = "Username không được để trống")
     @Size(max = 20, message = "Username không được quá 20 ký tự")

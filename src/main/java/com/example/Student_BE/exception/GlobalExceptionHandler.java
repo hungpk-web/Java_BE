@@ -1,6 +1,6 @@
 package com.example.Student_BE.exception;
 
-import com.example.Student_BE.dto.ApiResponse;
+import com.example.Student_BE.utils.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

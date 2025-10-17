@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Response thông tin student")
-public class StudentResponse {
+public class StudentResponseDto {
     
     @Schema(description = "ID sinh viên", example = "1")
     private Integer studentId;

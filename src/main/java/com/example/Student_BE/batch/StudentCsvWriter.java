@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.example.Student_BE.utils.DateTimeUtils;
+import com.example.Student_BE.utils.FileUtils;
 
 /**
  * Writer để ghi dữ liệu Student vào file CSV
@@ -48,15 +48,11 @@ public class StudentCsvWriter implements ItemWriter<String[]> {
      * Tạo file CSV với tên file có timestamp
      */
     private void createFile() throws IOException {
-        // Tạo thư mục nếu chưa có
-        java.io.File exportDir = new java.io.File(exportPath);
-        if (!exportDir.exists()) {
-            exportDir.mkdirs();
-        }
+        // Tạo thư mục nếu chưa có bằng FileUtils
+        FileUtils.createDirectoryIfNotExists(exportPath);
 
-        // Tạo tên file với timestamp
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String fileName = exportPath + "students_export_" + timestamp + ".csv";
+        // Tạo đường dẫn file với timestamp bằng FileUtils
+        String fileName = FileUtils.createFilePathWithTimestamp(exportPath, "students_export", ".csv");
 
         fileWriter = new FileWriter(fileName);
     }
@@ -78,20 +74,11 @@ public class StudentCsvWriter implements ItemWriter<String[]> {
             if (i > 0) {
                 csvRow.append(",");
             }
-            // Escape comma và quote trong dữ liệu
-            String value = row[i] != null ? row[i].replace("\"", "\"\"") : "";
-            csvRow.append("\"").append(value).append("\"");
+            // Escape giá trị CSV bằng FileUtils
+            String value = FileUtils.escapeCsvValue(row[i]);
+            csvRow.append(value);
         }
         csvRow.append("\n");
         fileWriter.write(csvRow.toString());
-    }
-
-    /**
-     * Đóng file writer
-     */
-    public void close() throws IOException {
-        if (fileWriter != null) {
-            fileWriter.close();
-        }
     }
 }

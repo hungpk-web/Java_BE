@@ -1,8 +1,8 @@
 package com.example.Student_BE.service;
 
-import com.example.Student_BE.dto.LoginRequest;
-import com.example.Student_BE.dto.LoginResponse;
-import com.example.Student_BE.dto.RegisterRequest;
+import com.example.Student_BE.dto.LoginRequestDto;
+import com.example.Student_BE.dto.LoginResponseDto;
+import com.example.Student_BE.dto.RegisterRequestDto;
 import com.example.Student_BE.entity.User;
 import com.example.Student_BE.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
-
+import com.example.Student_BE.utils.DateTimeUtils;
 /**
  * Service xử lý authentication
  */
@@ -32,9 +32,9 @@ public class AuthService {
     /**
      * Đăng nhập user
      */
-    public LoginResponse login(LoginRequest loginRequest) {
+    public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         // Tìm user theo username
-        Optional<User> userOpt = userDao.findByUserName(loginRequest.getUserName());
+        Optional<User> userOpt = userDao.findByUserName(loginRequestDto.getUserName());
 
         if (userOpt.isEmpty()) {
             throw new RuntimeException("Username không tồn tại");
@@ -43,7 +43,7 @@ public class AuthService {
         User user = userOpt.get();
 
         // Kiểm tra password
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Password không đúng");
         }
 
@@ -52,12 +52,10 @@ public class AuthService {
         String token = jwtService.generateToken(user.getUserId(), user.getUserName());
 
         // Format thời gian dạng yyyy-MM-dd HH:mm:ss
-        java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        java.time.ZoneId zone = java.time.ZoneId.systemDefault();
-        String loginAt = java.time.Instant.ofEpochMilli(now).atZone(zone).format(fmt);
-        String expiresAt = java.time.Instant.ofEpochMilli(now + expiration).atZone(zone).format(fmt);
+        String loginAt = DateTimeUtils.formatEpochMillis(now);
+        String expiresAt = DateTimeUtils.formatEpochMillis(now + expiration);
 
-        return new LoginResponse(token, "Bearer", loginAt, expiresAt, user.getUserId(), user.getUserName());
+        return new LoginResponseDto(token, "Bearer", loginAt, expiresAt, user.getUserId(), user.getUserName());
     }
 
     /**
@@ -77,25 +75,20 @@ public class AuthService {
     /**
      * Đăng ký user mới
      */
-    public void register(RegisterRequest registerRequest) {
-        // Kiểm tra username đã tồn tại chưa
+    public void register(RegisterRequestDto registerRequest) {
         Optional<User> userOpt = userDao.findByUserName(registerRequest.getUserName());
         if (userOpt.isPresent()) {
             throw new RuntimeException("Username đã tồn tại");
         }
 
-        // Kiểm tra password và confirmPassword có trùng khớp không
         if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
             throw new RuntimeException("Password không trùng khớp");
         }
 
-        // Mã hóa password trước khi lưu
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
 
-        // Tạo user mới (userId sẽ tự động tăng)
         User user = new User(registerRequest.getUserName(), encodedPassword);
 
-        // Lưu user vào database
         userDao.insert(user);
     }
 }

@@ -1,6 +1,6 @@
 package com.example.Student_BE.controller;
 
-import com.example.Student_BE.dto.ApiResponse;
+import com.example.Student_BE.utils.ApiResponse;
 import com.example.Student_BE.service.BatchService;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.beans.factory.annotation.Autowired;

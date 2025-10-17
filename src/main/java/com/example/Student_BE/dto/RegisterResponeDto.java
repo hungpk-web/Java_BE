@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Response đăng ky")
-public class RegisterRespone {
+public class RegisterResponeDto {
     @Schema(description = "ID user", example = "1")
     private Integer userId;
 

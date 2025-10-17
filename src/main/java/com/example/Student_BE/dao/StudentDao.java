@@ -11,12 +11,7 @@ import org.seasar.doma.Sql;
 import org.seasar.doma.jdbc.Result;
 
 import java.util.List;
-import java.util.Optional;
 
-/**
- * Doma2 DAO cho Student entity
- * Cung cấp các method CRUD cơ bản và custom queries
- */
 @Dao
 public interface StudentDao {
 
@@ -24,20 +19,16 @@ public interface StudentDao {
      * Lấy tất cả students
      */
     @Select
+    @Sql("SELECT * FROM student ORDER BY student_id")
     List<Student> selectAll();
 
     /**
      * Tìm student theo ID
      */
     @Select
+    @Sql("SELECT * FROM student WHERE student_id = /*id*/1")
     Student selectById(Integer id);
 
-    /**
-     * Tìm student theo student code
-     */
-    @Select
-    @Sql("SELECT * FROM student WHERE student_code = /*code*/'ST001'")
-    Optional<Student> findByStudentCode(String code);
 
     /**
      * Kiểm tra student code có tồn tại
@@ -53,16 +44,6 @@ public interface StudentDao {
     @Sql("SELECT * FROM student WHERE student_name LIKE /*name*/'%John%'")
     List<Student> findByStudentNameContaining(String name);
 
-    /**
-     * Lấy danh sách student với thông tin chi tiết
-     */
-    @Select
-    @Sql("""
-        SELECT s.*, si.info_id, si.address, si.average_score, si.date_of_birth
-        FROM student s 
-        LEFT JOIN student_info si ON s.student_id = si.student_id
-        """)
-    List<StudentWithInfo> findAllWithStudentInfo();
 
     /**
      * Thêm student mới

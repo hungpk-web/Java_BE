@@ -1,8 +1,8 @@
 package com.example.Student_BE.controller;
 
-import com.example.Student_BE.dto.ApiResponse;
-import com.example.Student_BE.dto.StudentRequest;
-import com.example.Student_BE.dto.StudentResponse;
+import com.example.Student_BE.utils.ApiResponse;
+import com.example.Student_BE.dto.StudentRequestDto;
+import com.example.Student_BE.dto.StudentResponseDto;
 import com.example.Student_BE.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,9 +31,9 @@ public class StudentController {
      */
     @GetMapping
     @Operation(summary = "Lấy danh sách sinh viên", description = "Lấy danh sách tất cả sinh viên")
-    public ResponseEntity<ApiResponse<List<StudentResponse>>> getAllStudents() {
+    public ResponseEntity<ApiResponse<List<StudentResponseDto>>> getAllStudents() {
         try {
-            List<StudentResponse> students = studentService.getAllStudents();
+            List<StudentResponseDto> students = studentService.getAllStudents();
             return ResponseEntity.ok(ApiResponse.success("Lấy danh sách sinh viên thành công ", students));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -46,10 +46,10 @@ public class StudentController {
      */
     @GetMapping("/{id}")
     @Operation(summary = "Lấy thông tin sinh viên", description = "Lấy thông tin sinh viên theo ID")
-    public ResponseEntity<ApiResponse<StudentResponse>> getStudentById(
+    public ResponseEntity<ApiResponse<StudentResponseDto>> getStudentById(
             @Parameter(description = "ID sinh viên") @PathVariable Integer id) {
         try {
-            StudentResponse student = studentService.getStudentById(id);
+            StudentResponseDto student = studentService.getStudentById(id);
             return ResponseEntity.ok(ApiResponse.success("Lấy thông tin sinh viên thành công", student));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -62,9 +62,9 @@ public class StudentController {
      */
     @PostMapping
     @Operation(summary = "Tạo sinh viên mới", description = "Tạo sinh viên mới với thông tin đầy đủ")
-    public ResponseEntity<ApiResponse<StudentResponse>> createStudent(@Valid @RequestBody StudentRequest studentRequest) {
+    public ResponseEntity<ApiResponse<StudentResponseDto>> createStudent(@Valid @RequestBody StudentRequestDto studentRequestDto) {
         try {
-            StudentResponse student = studentService.createStudent(studentRequest);
+            StudentResponseDto student = studentService.createStudent(studentRequestDto);
             return ResponseEntity.ok(ApiResponse.success("Tạo sinh viên thành công", student));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -77,11 +77,11 @@ public class StudentController {
      */
     @PutMapping("/{id}")
     @Operation(summary = "Cập nhật sinh viên", description = "Cập nhật thông tin sinh viên theo ID")
-    public ResponseEntity<ApiResponse<StudentResponse>> updateStudent(
+    public ResponseEntity<ApiResponse<StudentResponseDto>> updateStudent(
             @Parameter(description = "ID sinh viên") @PathVariable Integer id,
-            @Valid @RequestBody StudentRequest studentRequest) {
+            @Valid @RequestBody StudentRequestDto studentRequestDto) {
         try {
-            StudentResponse student = studentService.updateStudent(id, studentRequest);
+            StudentResponseDto student = studentService.updateStudent(id, studentRequestDto);
             return ResponseEntity.ok(ApiResponse.success("Cập nhật sinh viên thành công", student));
         } catch (Exception e) {
             return ResponseEntity.badRequest()

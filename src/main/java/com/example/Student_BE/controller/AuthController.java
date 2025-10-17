@@ -1,6 +1,7 @@
 package com.example.Student_BE.controller;
 
 import com.example.Student_BE.dto.*;
+import com.example.Student_BE.utils.ApiResponse;
 import com.example.Student_BE.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,9 +27,9 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "Đăng nhập", description = "Đăng nhập với username và password")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto loginRequest) {
         try {
-            LoginResponse response = authService.login(loginRequest);
+            LoginResponseDto response = authService.login(loginRequest);
             return ResponseEntity.ok(ApiResponse.success("Đăng nhập thành công", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -37,10 +38,10 @@ public class AuthController {
     }
     @PostMapping("/register")
     @Operation(summary = "Đăng ky", description = "Đăng ky voi username va password")
-    public ResponseEntity<ApiResponse<RegisterRespone>> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<ApiResponse<RegisterResponeDto>> register(@Valid @RequestBody RegisterRequestDto registerRequest) {
         try {
             authService.register(registerRequest);
-            RegisterRespone response = new RegisterRespone();
+            RegisterResponeDto response = new RegisterResponeDto();
             return ResponseEntity.ok(ApiResponse.success("Đăng ky thành công", response));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
