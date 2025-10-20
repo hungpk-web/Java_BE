@@ -44,7 +44,12 @@ public interface StudentDao {
     @Sql("SELECT * FROM student WHERE student_name LIKE /*name*/'%John%'")
     List<Student> findByStudentNameContaining(String name);
 
-
+    /**
+     * Truy xuat du lieu co limit tranh OOM
+     */
+    @Select
+    @Sql("SELECT * FROM student ORDER BY student_id LIMIT /*limit*/100 OFFSET /*offset*/0")
+    List<Student> selectAllWithPagination(int limit, int offset);
     /**
      * Thêm student mới
      */

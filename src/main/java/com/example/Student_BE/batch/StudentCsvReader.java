@@ -20,20 +20,21 @@ public class StudentCsvReader implements ItemReader<Student> {
 
     @Autowired
     private StudentDao studentDao;
-
     private Iterator<Student> studentIterator;
+    private int offset = 0;
+    private int limit = 100;
 
     @Override
-    public Student read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-        if (studentIterator == null) {
-            List<Student> students = studentDao.selectAll();
-            studentIterator = students.iterator();
-        }
+    public Student read() throws Exception {
+        if (studentIterator == null || !studentIterator.hasNext()) {
+            List<Student> students = studentDao.selectAllWithPagination(limit, offset);
+            if (students.isEmpty()) {
+                return null;
+            }
 
-        if (studentIterator.hasNext()) {
-            return studentIterator.next();
-        } else {
-            return null; // Kết thúc đọc
+            studentIterator = students.iterator();
+            offset += limit;
         }
+        return studentIterator.next();
     }
 }
