@@ -5,6 +5,7 @@ import com.example.Student_BE.dto.LoginResponseDto;
 import com.example.Student_BE.dto.RegisterRequestDto;
 import com.example.Student_BE.entity.User;
 import com.example.Student_BE.dao.UserDao;
+import com.example.Student_BE.utils.getToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,6 +55,7 @@ public class AuthService {
         // Format thời gian dạng yyyy-MM-dd HH:mm:ss
         String loginAt = DateTimeUtils.formatEpochMillis(now);
         String expiresAt = DateTimeUtils.formatEpochMillis(now + expiration);
+        getToken.token=token;
 
         return new LoginResponseDto(token, "Bearer", loginAt, expiresAt, user.getUserId(), user.getUserName());
     }

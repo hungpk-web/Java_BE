@@ -6,6 +6,7 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +27,7 @@ public class StudentCsvJobConfig {
     private PlatformTransactionManager transactionManager;
 
     @Autowired
-    private StudentCsvReader studentCsvReader;
+    private JdbcCursorItemReader<Student> jdbcCursorItemReader;
 
     @Autowired
     private StudentCsvProcessor studentCsvProcessor;
@@ -59,7 +60,7 @@ public class StudentCsvJobConfig {
     public Step exportStudentCsvStep() {
         return new StepBuilder("exportStudentCsvStep", jobRepository)
                 .<Student, String[]>chunk(10, transactionManager)
-                .reader(studentCsvReader)
+                .reader(jdbcCursorItemReader)
                 .processor(studentCsvProcessor)
                 .writer(studentCsvWriter)
                 .build();

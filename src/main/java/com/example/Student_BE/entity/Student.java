@@ -2,6 +2,7 @@ package com.example.Student_BE.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.seasar.doma.Entity;
 import org.seasar.doma.GeneratedValue;
 import org.seasar.doma.GenerationType;
@@ -14,18 +15,19 @@ import org.seasar.doma.Column;
 @Table(name = "student")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "student_id")
-    private final Integer studentId;
+    private  Integer studentId;
 
     @Column(name = "student_name")
-    private final String studentName;
+    private String studentName;
 
     @Column(name = "student_code")
-    private final String studentCode;
+    private  String studentCode;
 
 
 }
