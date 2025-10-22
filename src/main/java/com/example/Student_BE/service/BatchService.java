@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.Student_BE.utils.DateTimeUtils;
 
-/**
- * Service để quản lý Batch Jobs
- */
+
 @Service
 public class BatchService {
 

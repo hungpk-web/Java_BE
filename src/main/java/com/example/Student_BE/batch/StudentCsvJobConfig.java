@@ -14,9 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import com.example.Student_BE.entity.Student;
 
-/**
- * Cấu hình Batch Job để export CSV
- */
 @Configuration
 public class StudentCsvJobConfig {
 

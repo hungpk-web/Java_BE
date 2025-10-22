@@ -9,10 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-/**
- * Processor để xử lý dữ liệu Student trước khi ghi vào CSV
- * Chuyển đổi từ Student entity sang String array cho CSV
- */
 @Component
 public class StudentCsvProcessor implements ItemProcessor<Student, String[]> {
 

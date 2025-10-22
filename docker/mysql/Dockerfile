@@ -4,7 +4,7 @@ FROM mysql:8
 ENV MYSQL_ROOT_PASSWORD=Student@123.
 ENV MYSQL_DATABASE=student_db
 ENV MYSQL_USER=student
-ENV MYSQL_PASSWORD=student@123
+ENV MYSQL_PASSWORD=Student@123
 ENV TZ=Asia/Ho_Chi_Minh
 
 # Copy các script init vào thư mục đặc biệt; MySQL sẽ tự chạy theo thứ tự tên file

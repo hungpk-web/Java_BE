@@ -13,15 +13,18 @@ services:
       MYSQL_ROOT_PASSWORD: "Student@123."
       MYSQL_DATABASE: "student_db"
       MYSQL_USER: "student"
-      MYSQL_PASSWORD: "student@123"
+      MYSQL_PASSWORD: "Student@123"
       TZ: "Asia/Ho_Chi_Minh"
     volumes:
       - student_mysql_data:/var/lib/mysql
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "student", "-pStudent@123"]
-      timeout: 20s
-      retries: 10
+      # Lệnh test này sẽ thực sự chạy 1 câu query, thay vì chỉ ping
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "student", "-pStudent@123" ]
+      interval: 5s       # Thử lại mỗi 5 giây (nhanh hơn để phát hiện sớm)
+      timeout: 3s        # Hết 3 giây là tính thất bại
+      retries: 10        # Thử lại 10 lần (tổng ~50s)
+      start_period: 40s  # Cho MySQL 40s để khởi động ban đầu
 
   # Spring Boot Application (Development Mode)
   student-app:
@@ -35,16 +38,25 @@ services:
       - ../src:/app/src
       - maven-cache:/root/.m2
       - ../pom.xml:/app/pom.xml
+      - ../exports:/app/exports
     working_dir: /app
     depends_on:
       mysql:
         condition: service_healthy
     restart: unless-stopped
     environment:
-      - "SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/student_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      - "SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/student_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&connectTimeout=30000&socketTimeout=60000"
       - "SPRING_DATASOURCE_USERNAME=student"
       - "SPRING_DATASOURCE_PASSWORD=Student@123"
-      - "SPRING_PROFILES_ACTIVE=dev"
+      - "SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver"
+      - "SPRING_BATCH_JDBC_INITIALIZE_SCHEMA=always"
+      - "SPRING_BATCH_JOB_ENABLED=false"
+      - "SPRING_DEVTOOLS_RESTART_ENABLED=false"
+      - "SPRING_DEVTOOLS_LIVERELOAD_ENABLED=false"
+      - "SPRING_DATASOURCE_HIKARI_INITIALIZATIONFAILTIMEOUT=120000"
+      - "SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT=30000"
+      - "SPRING_DATASOURCE_HIKARI_VALIDATION_TIMEOUT=5000"
+
 
   # Tuỳ chọn: UI quản trị DB đơn giản
   adminer:
